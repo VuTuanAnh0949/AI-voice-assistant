@@ -1,16 +1,50 @@
+# ============================================================
+# AI Voice Assistant Suite - Python Dependencies
+# Install with:
+#   pip install -r requirements.txt
+#
+# NOTE: chromadb must be installed separately via conda:
+#   conda install -c conda-forge chromadb -y
+#
+# NOTE: TTS (Coqui) requires Microsoft C++ Build Tools on Windows.
+#   If unavailable, pyttsx3 is used as fallback (already included).
+# ============================================================
+
+# Web framework
+flask
+
+# Speech transcription
 openai-whisper
-speechrecognition
-pydub # pydub is needed to handle .mp3 or convert formats
-TTS #  Optionally download models: tts --list_models
-chromadb 
+SpeechRecognition
+
+# Audio processing
+pydub
+librosa
+soundfile
+
+# Text-to-Speech (fallback, no build tools required)
+pyttsx3
+
+# Voice cloning / TTS (optional, requires C++ Build Tools on Windows)
+# TTS
+
+# Emotion detection
+torch
+numpy
+scikit-learn
+joblib
+matplotlib
+
+# Document Q&A (RAG)
 sentence-transformers
 transformers
-librosa 
-scikit-learn 
-numpy 
-torch 
-matplotlib
+# chromadb  <-- install via: conda install -c conda-forge chromadb -y
+
+# Podcast summarization
 nltk
-flask
-joblib
-sklearn
+
+# Document parsing
+pypdf
+
+# Utilities
+tqdm

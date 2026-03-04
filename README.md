@@ -1,6 +1,6 @@
 ﻿# AI-powered Voice Assistant Suite (6-in-1 Web App)
 
-An AI Voice Assistant web platform combining **6 smart voice modules** â€” transcription, text-to-speech, voice cloning, emotion detection, document Q&A, and podcast summarization â€” all accessible via a modern **Flask web interface**.
+An AI Voice Assistant web platform combining **6 smart voice modules** as” transcription, text-to-speech, voice cloning, emotion detection, document Q&A, and podcast summarization” all accessible via a modern **Flask web interface**.
 
 ![demo](./images/UI.png)
 
@@ -28,12 +28,12 @@ An AI Voice Assistant web platform combining **6 smart voice modules** â€” 
 
 This voice assistant toolkit empowers users with:
 
-- ðŸŽ™ï¸ Transcription from audio to text (Whisper)
-- ðŸ”Š Text-to-Speech voice generation (Coqui TTS / pyttsx3 fallback)
-- ðŸ§¬ Voice cloning from a reference sample (YourTTS)
-- ðŸ§  Emotion detection from voice (CNN + MFCC, trained on RAVDESS)
-- ðŸ’¬ Voice-based Q&A over documents (Whisper + ChromaDB + SentenceTransformer)
-- ðŸŽ§ Podcast summarization (Whisper + DistilBART)
+- Transcription from audio to text (Whisper)
+- Text-to-Speech voice generation (Coqui TTS / pyttsx3 fallback)
+- Voice cloning from a reference sample (YourTTS)
+- Emotion detection from voice (CNN + MFCC, trained on RAVDESS)
+- Voice-based Q&A over documents (Whisper + ChromaDB + SentenceTransformer)
+- Podcast summarization (Whisper + DistilBART)
 
 Accessible through a **dark-themed, responsive Flask UI** built with Tailwind CSS.
 
@@ -45,7 +45,7 @@ Accessible through a **dark-themed, responsive Flask UI** built with Tailwind CS
 | ----------------------- | ---------------------------------- | ---------------------------------------------- |
 | **Voice Transcription** | Convert audio file to text         | `openai-whisper` (base)                        |
 | **Text-to-Speech**      | Generate voice from text input     | `Coqui TTS` / `pyttsx3` fallback               |
-| **Voice Cloning**       | Clone a voice from a 3â€“5s sample | `YourTTS` multi-speaker model                  |
+| **Voice Cloning**       | Clone a voice from a 3–5s sample | `YourTTS` multi-speaker model                  |
 | **Emotion Detection**   | Predict emotion from voice         | `CNN` + `MFCC` (RAVDESS dataset)               |
 | **Document Q&A**        | Ask voice questions over documents | `Whisper` + `ChromaDB` + `SentenceTransformer` |
 | **Podcast Summarizer**  | Summarize long audio recordings    | `Whisper` + `DistilBART`                       |
@@ -56,8 +56,8 @@ Accessible through a **dark-themed, responsive Flask UI** built with Tailwind CS
 
 ```
 ├── flask_app.py                  # Flask web app
-├── __pycache__/  
-├── images/                     
+├── __pycache__/
+├── images/
 ├── ravdess-data/                     # RAVDESS dataset
 ├── templates/                     # HTML interface
 ├── static/                        # Output audio files
@@ -98,7 +98,7 @@ Accessible through a **dark-themed, responsive Flask UI** built with Tailwind CS
 
 ### Prerequisites
 
-- **Python 3.10** (recommended â€” tested with 3.10.19)
+- **Python 3.10** (recommended tested with 3.10.19)
 - **Conda** (Anaconda or Miniconda)
 - **ffmpeg** (required by Whisper)
 
@@ -136,18 +136,18 @@ conda install -c conda-forge chromadb -y
 
 ### 4. Install ffmpeg
 
-**Option A â€“ via conda (recommended):**
+**Option A – via conda (recommended):**
 
 ```bash
 conda install -c conda-forge ffmpeg -y
 ```
 
-**Option B â€“ manual:**
+**Option B – manual:**
 Download from https://ffmpeg.org/download.html and add to system PATH.
 
 ### 5. Fix `train_emotion_cnn.py` (important!)
 
-The training script must **not** run on import. Ensure all training code is inside `if __name__ == "__main__":` and the `EmotionCNN` class is defined at module level. The pre-trained weights (`emotion_cnn.pth`) are already included â€” no need to retrain.
+The training script must **not** run on import. Ensure all training code is inside `if __name__ == "__main__":` and the `EmotionCNN` class is defined at module level. The pre-trained weights (`emotion_cnn.pth`) are already included no need to retrain.
 
 ---
 
@@ -180,20 +180,20 @@ Then open your browser at: **http://127.0.0.1:5000**
 
 ### 2. Text-to-Speech
 
-- Type any text â†’ generates a `.wav` voice output.
+- Type any text → generates a `.wav` voice output.
 - Uses **Coqui TTS** (`tacotron2-DDC`) if installed, otherwise **pyttsx3**.
 - Output saved to `static/tts_output.wav`.
 
 ### 3. Voice Cloning
 
-- Upload a 3â€“5 second voice sample (`.wav`).
-- Type any text â†’ synthesizes speech in the reference speaker's voice.
+- Upload a 3–5 second voice sample (`.wav`).
+- Type any text → synthesizes speech in the reference speaker's voice.
 - Uses **YourTTS** multi-speaker model (requires Coqui TTS).
 
 ### 4. Emotion Detection
 
 - Upload a `.wav` audio file.
-- Extracts **MFCC** features â†’ feeds into a custom **2-layer CNN**.
+- Extracts **MFCC** features → feeds into a custom **2-layer CNN**.
 - Trained on the **RAVDESS** dataset, predicts one of 8 emotions:
   `neutral`, `calm`, `happy`, `sad`, `angry`, `fearful`, `disgust`, `surprised`
 - To retrain: `python train_emotion_cnn.py`
@@ -201,12 +201,12 @@ Then open your browser at: **http://127.0.0.1:5000**
 ### 5. Voice Document Q&A
 
 - Upload a voice question (`.wav`/`.mp3`) + optionally a document (`.pdf`/`.txt`) or paste text.
-- Pipeline: **Whisper** transcribes â†’ **SentenceTransformer** embeds â†’ **ChromaDB** retrieves â†’ LLM answers.
+- Pipeline: **Whisper** transcribes → **SentenceTransformer** embeds → **ChromaDB** retrieves → LLM answers.
 
 ### 6. Podcast Summarizer
 
 - Upload a long audio file (`.wav`/`.mp3`).
-- **Whisper** transcribes â†’ text chunked â†’ **DistilBART** summarizes each chunk.
+- **Whisper** transcribes → text chunked → **DistilBART** summarizes each chunk.
 
 ---
 
@@ -214,27 +214,27 @@ Then open your browser at: **http://127.0.0.1:5000**
 
 ### 1. Voice Transcription
 
-- Whisper converts audio waveform â†’ log-Mel spectrogram â†’ text via multilingual decoder.
+- Whisper converts audio waveform → log-Mel spectrogram → text via multilingual decoder.
 
 ### 2. Text-to-Speech
 
-- Tacotron2 converts text â†’ mel-spectrogram â†’ HiFi-GAN vocoder â†’ audio waveform.
+- Tacotron2 converts text → mel-spectrogram → HiFi-GAN vocoder → audio waveform.
 
 ### 3. Voice Cloning
 
-- Extract speaker embedding from reference audio â†’ multi-speaker TTS synthesizes matching voice.
+- Extract speaker embedding from reference audio → multi-speaker TTS synthesizes matching voice.
 
 ### 4. Emotion Detection
 
-- `librosa.load()` â†’ MFCC (40 coefficients, 174 frames) â†’ CNN (2 conv layers) â†’ softmax â†’ emotion label.
+- `librosa.load()` → MFCC (40 coefficients, 174 frames) → CNN (2 conv layers) → softmax → emotion label.
 
 ### 5. Document Q&A (RAG)
 
-- Whisper transcribes query â†’ SentenceTransformer encodes â†’ ChromaDB vector search â†’ LLM generates answer from retrieved context.
+- Whisper transcribes query → SentenceTransformer encodes → ChromaDB vector search → LLM generates answer from retrieved context.
 
 ### 6. Podcast Summarization
 
-- Whisper transcribes full audio â†’ NLTK sentence tokenizer â†’ chunks of ~200 words â†’ DistilBART summarizes each â†’ joined output.
+- Whisper transcribes full audio → NLTK sentence tokenizer → chunks of ~200 words → DistilBART summarizes each → joined output.
 
 ---
 
