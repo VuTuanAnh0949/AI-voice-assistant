@@ -9,9 +9,15 @@ from emotion_detector import predict_emotion
 from podcast_summarizer import summarize_podcast
 
 app = Flask(__name__)
+app.secret_key = 'ai-voice-assistant-secret'
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+AUDIO_EXTENSIONS = {'.wav', '.mp3', '.ogg', '.flac', '.m4a', '.webm'}
+
+def is_audio_file(filename):
+    return os.path.splitext(filename.lower())[1] in AUDIO_EXTENSIONS
 
 @app.route('/')
 def index():
@@ -20,6 +26,9 @@ def index():
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
     audio = request.files['audio']
+    if not is_audio_file(audio.filename):
+        return render_template('result.html', title='Error',
+            result='Please upload an audio file (.wav, .mp3, .ogg, etc.), not a PDF or other format.')
     path = os.path.join(app.config['UPLOAD_FOLDER'], audio.filename)
     audio.save(path)
 
@@ -45,6 +54,9 @@ def clone():
 @app.route('/emotion', methods=['POST'])
 def emotion():
     audio = request.files['audio']
+    if not is_audio_file(audio.filename):
+        return render_template('result.html', title='Error',
+            result='Please upload an audio file (.wav, .mp3, .ogg, etc.), not a PDF or other format.')
     path = os.path.join(app.config['UPLOAD_FOLDER'], audio.filename)
     audio.save(path)
 
@@ -54,20 +66,66 @@ def emotion():
 @app.route('/qa', methods=['POST'])
 def qa():
     audio = request.files['audio']
+    if not is_audio_file(audio.filename):
+        return render_template('result.html', title='Error',
+            result='Voice Q&A: Please upload an AUDIO file (.wav/.mp3) as your voice question. To provide a document, use the Document field or paste text below.')
     path = os.path.join(app.config['UPLOAD_FOLDER'], audio.filename)
     audio.save(path)
 
-    docs = [
-        "Python is a programming language.",
-        "Whisper is an ASR model.",
-        "The capital of France is Paris."
-    ]
+    # Build document corpus from uploaded file or pasted text
+    docs = []
+
+    # Option 1: pasted text
+    doc_text = request.form.get('doc_text', '').strip()
+    if doc_text:
+        # Split into ~500-char chunks
+        for i in range(0, len(doc_text), 500):
+            chunk = doc_text[i:i+500].strip()
+            if chunk:
+                docs.append(chunk)
+
+    # Option 2: uploaded document file (PDF or txt)
+    doc_file = request.files.get('document')
+    if doc_file and doc_file.filename:
+        doc_path = os.path.join(app.config['UPLOAD_FOLDER'], doc_file.filename)
+        doc_file.save(doc_path)
+        ext = os.path.splitext(doc_file.filename.lower())[1]
+        if ext == '.txt':
+            with open(doc_path, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+            for i in range(0, len(content), 500):
+                chunk = content[i:i+500].strip()
+                if chunk:
+                    docs.append(chunk)
+        elif ext == '.pdf':
+            try:
+                import pypdf
+                reader = pypdf.PdfReader(doc_path)
+                content = ' '.join(page.extract_text() or '' for page in reader.pages)
+                for i in range(0, len(content), 500):
+                    chunk = content[i:i+500].strip()
+                    if chunk:
+                        docs.append(chunk)
+            except ImportError:
+                docs.append('PDF parsing requires pypdf. Please paste document text instead.')
+
+    # Fallback default documents
+    if not docs:
+        docs = [
+            "Python is a programming language.",
+            "Whisper is an ASR model by OpenAI.",
+            "The capital of France is Paris."
+        ]
+
     answer = voice_query_to_answer(path, documents=docs)
     return render_template('result.html', title='Answer to Your Voice Question', result=answer)
 
 @app.route('/summarize', methods=['POST'])
 def summarize():
     podcast = request.files['podcast']
+    if not is_audio_file(podcast.filename):
+        return render_template('result.html', title='Error',
+            result='Podcast Summarizer requires an AUDIO file (.wav, .mp3, etc.). You uploaded a non-audio file. Please upload the podcast audio, not a PDF.')
     path = os.path.join(app.config['UPLOAD_FOLDER'], podcast.filename)
     podcast.save(path)
 

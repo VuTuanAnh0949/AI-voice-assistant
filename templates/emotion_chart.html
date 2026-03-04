@@ -1,40 +1,125 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Emotion Chart</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-  <h2>📊 Emotion Distribution</h2>
-  <canvas id="emotionChart" width="600" height="400"></canvas>
-  <script>
-    const ctx = document.getElementById('emotionChart');
-    const emotionChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: {{ labels|safe }},
-        datasets: [{
-          label: 'Emotion Count',
-          data: {{ values|safe }},
-          backgroundColor: 'rgba(75, 192, 192, 0.5)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              precision: 0
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emotion Chart — AI Voice Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900 text-white flex flex-col"
+  >
+    <!-- Header -->
+    <header class="border-b border-white/10 py-6 px-8 flex items-center gap-3">
+      <div
+        class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl"
+      >
+        🤖
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-tight">AI Voice Assistant</h1>
+        <p class="text-xs text-gray-400">6-in-1 Smart Voice Platform</p>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 flex items-start justify-center px-6 py-12">
+      <div class="w-full max-w-3xl">
+        <div class="glass rounded-2xl p-8">
+          <div class="flex items-center gap-3 mb-8">
+            <div
+              class="w-2 h-8 rounded-full bg-gradient-to-b from-indigo-500 to-purple-600"
+            ></div>
+            <h2 class="text-xl font-semibold">📊 Emotion Distribution</h2>
+          </div>
+
+          <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+            <canvas id="emotionChart"></canvas>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-white/10">
+            <a
+              href="/"
+              class="inline-flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
+            >
+              ← Back to Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-center text-xs text-gray-600 py-6">
+      AI Voice Assistant &mdash; Built with Whisper · Coqui TTS · ChromaDB ·
+      PyTorch
+    </footer>
+
+    <script>
+      const ctx = document.getElementById('emotionChart');
+      const emotionChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{ labels|safe }},
+          datasets: [{
+            label: 'Emotion Count',
+            data: {{ values|safe }},
+            backgroundColor: [
+              'rgba(99,102,241,0.7)',
+              'rgba(139,92,246,0.7)',
+              'rgba(236,72,153,0.7)',
+              'rgba(59,130,246,0.7)',
+              'rgba(16,185,129,0.7)',
+              'rgba(245,158,11,0.7)',
+              'rgba(239,68,68,0.7)',
+              'rgba(14,165,233,0.7)',
+            ],
+            borderColor: [
+              'rgba(99,102,241,1)',
+              'rgba(139,92,246,1)',
+              'rgba(236,72,153,1)',
+              'rgba(59,130,246,1)',
+              'rgba(16,185,129,1)',
+              'rgba(245,158,11,1)',
+              'rgba(239,68,68,1)',
+              'rgba(14,165,233,1)',
+            ],
+            borderWidth: 2,
+            borderRadius: 8,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#e5e7eb' } }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#9ca3af' },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0, color: '#9ca3af' },
+              grid: { color: 'rgba(255,255,255,0.05)' }
             }
           }
         }
-      }
-    });
-  </script>
-  <br><a href="/">⬅️ Main Page</a>
-</body>
+      });
+    </script>
+  </body>
 </html>

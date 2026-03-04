@@ -1,56 +1,348 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>AI Voice Assistant</title>
-</head>
-<body>
-  <h1>🤖 AI Voice Assistant Dashboard</h1>
-  <h3>Select Feature:</h3>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Voice Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .card-hover {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      }
+      input[type="file"]::file-selector-button {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        margin-right: 10px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        transition: opacity 0.2s;
+      }
+      .btn-primary:hover {
+        opacity: 0.85;
+      }
+      .loading {
+        display: none;
+      }
+      .form-submitting .loading {
+        display: inline-block;
+      }
+      .form-submitting .btn-text {
+        display: none;
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-900 text-white"
+  >
+    <!-- Header -->
+    <header
+      class="border-b border-white/10 py-6 px-8 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xl"
+        >
+          🤖
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight">AI Voice Assistant</h1>
+          <p class="text-xs text-gray-400">6-in-1 Smart Voice Platform</p>
+        </div>
+      </div>
+      <a
+        href="/emotion_chart"
+        class="flex items-center gap-2 text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+      >
+        <span>📊</span> Emotion Chart
+      </a>
+    </header>
 
-  <!-- Transcription -->
-  <form action="/transcribe" method="post" enctype="multipart/form-data">
-    <h4>1. Voice Transcription</h4>
-    <input type="file" name="audio" required>
-    <button type="submit">Transcribe</button>
-  </form>
+    <!-- Main -->
+    <main class="max-w-6xl mx-auto px-6 py-10">
+      <p class="text-gray-400 text-sm mb-8 text-center">
+        Select a feature below and upload your audio file to get started
+      </p>
 
-  <!-- TTS -->
-  <form action="/tts" method="post">
-    <h4>2. Text-to-Speech</h4>
-    <textarea name="text" placeholder="Enter text here" required></textarea>
-    <button type="submit">Generate Voice</button>
-  </form>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <!-- 1. Voice Transcription -->
+        <div class="glass rounded-2xl p-6 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-2xl">🎙️</span>
+            <div>
+              <h2 class="font-semibold text-white">Voice Transcription</h2>
+              <p class="text-xs text-gray-400">
+                Convert audio to text via Whisper
+              </p>
+            </div>
+          </div>
+          <form
+            action="/transcribe"
+            method="post"
+            enctype="multipart/form-data"
+            onsubmit="setLoading(this)"
+          >
+            <label class="block text-xs text-gray-400 mb-1"
+              >Audio file (.wav / .mp3)</label
+            >
+            <input
+              type="file"
+              name="audio"
+              accept="audio/*,.wav,.mp3,.ogg,.flac"
+              required
+              class="w-full text-sm text-gray-300 bg-white/5 rounded-lg p-2 mb-4 border border-white/10"
+            />
+            <button
+              type="submit"
+              class="btn-primary w-full py-2.5 rounded-xl text-sm font-medium text-white"
+            >
+              <span class="btn-text">Transcribe →</span>
+              <span class="loading">⏳ Processing...</span>
+            </button>
+          </form>
+        </div>
 
-  <!-- Voice Cloning -->
-  <form action="/clone" method="post" enctype="multipart/form-data">
-    <h4>3. Voice Cloning</h4>
-    <textarea name="text" placeholder="Text to speak" required></textarea><br>
-    <input type="file" name="speaker_audio" required>
-    <button type="submit">Clone & Speak</button>
-  </form>
+        <!-- 2. Text-to-Speech -->
+        <div class="glass rounded-2xl p-6 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-2xl">🔊</span>
+            <div>
+              <h2 class="font-semibold text-white">Text-to-Speech</h2>
+              <p class="text-xs text-gray-400">
+                Generate voice from text (Coqui TTS)
+              </p>
+            </div>
+          </div>
+          <form action="/tts" method="post" onsubmit="setLoading(this)">
+            <label class="block text-xs text-gray-400 mb-1">Enter text</label>
+            <textarea
+              name="text"
+              placeholder="Type something to speak..."
+              required
+              rows="3"
+              class="w-full text-sm bg-white/5 text-gray-200 rounded-lg p-3 mb-4 border border-white/10 resize-none placeholder-gray-600 focus:outline-none focus:border-indigo-500"
+            ></textarea>
+            <button
+              type="submit"
+              class="btn-primary w-full py-2.5 rounded-xl text-sm font-medium text-white"
+            >
+              <span class="btn-text">Generate Voice →</span>
+              <span class="loading">⏳ Generating...</span>
+            </button>
+          </form>
+        </div>
 
-  <!-- Emotion Detection -->
-  <form action="/emotion" method="post" enctype="multipart/form-data">
-    <h4>4. Emotion Detection</h4>
-    <input type="file" name="audio" required>
-    <button type="submit">Detect Emotion</button>
-  </form>
-  <a href="/emotion_chart">📊 View Emotion Chart</a>
+        <!-- 3. Voice Cloning -->
+        <div class="glass rounded-2xl p-6 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-2xl">🧬</span>
+            <div>
+              <h2 class="font-semibold text-white">Voice Cloning</h2>
+              <p class="text-xs text-gray-400">
+                Clone a voice from a sample (YourTTS)
+              </p>
+            </div>
+          </div>
+          <form
+            action="/clone"
+            method="post"
+            enctype="multipart/form-data"
+            onsubmit="setLoading(this)"
+          >
+            <label class="block text-xs text-gray-400 mb-1"
+              >Text to speak</label
+            >
+            <textarea
+              name="text"
+              placeholder="Text to speak in cloned voice..."
+              required
+              rows="2"
+              class="w-full text-sm bg-white/5 text-gray-200 rounded-lg p-3 mb-3 border border-white/10 resize-none placeholder-gray-600 focus:outline-none focus:border-indigo-500"
+            ></textarea>
+            <label class="block text-xs text-gray-400 mb-1"
+              >Voice sample (.wav / .mp3)</label
+            >
+            <input
+              type="file"
+              name="speaker_audio"
+              accept="audio/*,.wav,.mp3"
+              required
+              class="w-full text-sm text-gray-300 bg-white/5 rounded-lg p-2 mb-4 border border-white/10"
+            />
+            <button
+              type="submit"
+              class="btn-primary w-full py-2.5 rounded-xl text-sm font-medium text-white"
+            >
+              <span class="btn-text">Clone & Speak →</span>
+              <span class="loading">⏳ Cloning...</span>
+            </button>
+          </form>
+        </div>
 
-  <!-- Voice Q&A -->
-  <form action="/qa" method="post" enctype="multipart/form-data">
-    <h4>5. Voice Document Q&A</h4>
-    <input type="file" name="audio" required>
-    <button type="submit">Ask Question</button>
-  </form>
+        <!-- 4. Emotion Detection -->
+        <div class="glass rounded-2xl p-6 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-2xl">🧠</span>
+            <div>
+              <h2 class="font-semibold text-white">Emotion Detection</h2>
+              <p class="text-xs text-gray-400">
+                Detect emotion from voice (CNN + MFCC)
+              </p>
+            </div>
+          </div>
+          <form
+            action="/emotion"
+            method="post"
+            enctype="multipart/form-data"
+            onsubmit="setLoading(this)"
+          >
+            <label class="block text-xs text-gray-400 mb-1"
+              >Audio file (.wav / .mp3)</label
+            >
+            <input
+              type="file"
+              name="audio"
+              accept="audio/*,.wav,.mp3,.ogg,.flac"
+              required
+              class="w-full text-sm text-gray-300 bg-white/5 rounded-lg p-2 mb-4 border border-white/10"
+            />
+            <button
+              type="submit"
+              class="btn-primary w-full py-2.5 rounded-xl text-sm font-medium text-white"
+            >
+              <span class="btn-text">Detect Emotion →</span>
+              <span class="loading">⏳ Analyzing...</span>
+            </button>
+          </form>
+        </div>
 
-  <!-- Podcast Summary -->
-  <form action="/summarize" method="post" enctype="multipart/form-data">
-    <h4>6. Podcast Summarizer</h4>
-    <input type="file" name="podcast" required>
-    <button type="submit">Summarize</button>
-  </form>
-</body>
+        <!-- 5. Voice Q&A -->
+        <div class="glass rounded-2xl p-6 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-2xl">💬</span>
+            <div>
+              <h2 class="font-semibold text-white">Voice Document Q&amp;A</h2>
+              <p class="text-xs text-gray-400">
+                Ask voice questions over documents (RAG)
+              </p>
+            </div>
+          </div>
+          <form
+            action="/qa"
+            method="post"
+            enctype="multipart/form-data"
+            onsubmit="setLoading(this)"
+          >
+            <label class="block text-xs text-gray-400 mb-1"
+              >Voice question (.wav / .mp3)</label
+            >
+            <input
+              type="file"
+              name="audio"
+              accept="audio/*,.wav,.mp3,.ogg,.flac"
+              required
+              class="w-full text-sm text-gray-300 bg-white/5 rounded-lg p-2 mb-3 border border-white/10"
+            />
+            <label class="block text-xs text-gray-400 mb-1"
+              >Document (.pdf / .txt) — optional</label
+            >
+            <input
+              type="file"
+              name="document"
+              accept=".pdf,.txt"
+              class="w-full text-sm text-gray-300 bg-white/5 rounded-lg p-2 mb-3 border border-white/10"
+            />
+            <label class="block text-xs text-gray-400 mb-1"
+              >Or paste document text — optional</label
+            >
+            <textarea
+              name="doc_text"
+              placeholder="Paste document content here..."
+              rows="2"
+              class="w-full text-sm bg-white/5 text-gray-200 rounded-lg p-3 mb-4 border border-white/10 resize-none placeholder-gray-600 focus:outline-none focus:border-indigo-500"
+            ></textarea>
+            <button
+              type="submit"
+              class="btn-primary w-full py-2.5 rounded-xl text-sm font-medium text-white"
+            >
+              <span class="btn-text">Ask Question →</span>
+              <span class="loading">⏳ Thinking...</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- 6. Podcast Summarizer -->
+        <div class="glass rounded-2xl p-6 card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-2xl">🎧</span>
+            <div>
+              <h2 class="font-semibold text-white">Podcast Summarizer</h2>
+              <p class="text-xs text-gray-400">
+                Transcribe &amp; summarize long audio (BART)
+              </p>
+            </div>
+          </div>
+          <form
+            action="/summarize"
+            method="post"
+            enctype="multipart/form-data"
+            onsubmit="setLoading(this)"
+          >
+            <label class="block text-xs text-gray-400 mb-1"
+              >Podcast audio (.wav / .mp3)</label
+            >
+            <input
+              type="file"
+              name="podcast"
+              accept="audio/*,.wav,.mp3,.ogg,.flac"
+              required
+              class="w-full text-sm text-gray-300 bg-white/5 rounded-lg p-2 mb-4 border border-white/10"
+            />
+            <button
+              type="submit"
+              class="btn-primary w-full py-2.5 rounded-xl text-sm font-medium text-white"
+            >
+              <span class="btn-text">Summarize →</span>
+              <span class="loading">⏳ Summarizing...</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-gray-600 py-6">
+      AI Voice Assistant &mdash; Built with Whisper · Coqui TTS · ChromaDB ·
+      PyTorch
+    </footer>
+
+    <script>
+      function setLoading(form) {
+        form.classList.add("form-submitting");
+      }
+    </script>
+  </body>
 </html>
-

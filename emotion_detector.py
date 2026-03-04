@@ -9,7 +9,7 @@ from train_emotion_cnn import EmotionCNN, extract_mfcc_2d
 
 # Initialize model
 model = EmotionCNN(num_classes=8)
-model.load_state_dict(torch.load("emotion_cnn.pth"))
+model.load_state_dict(torch.load("emotion_cnn.pth", map_location="cpu", weights_only=True))
 model.eval()
 
 # Load label encoder

@@ -1,4 +1,4 @@
-import os
+﻿import os
 import numpy as np
 import librosa
 import torch
@@ -26,31 +26,6 @@ def get_label(file):
     }
     return mapping.get(code, 'unknown')
 
-# Load data
-X, y = [], []
-for f in os.listdir("ravdess-data"):
-    if f.endswith(".wav"):
-        X.append(extract_mfcc_2d(os.path.join("ravdess-data", f)))
-        y.append(get_label(f))
-
-X = np.array(X)[:, np.newaxis, :, :]  # (N, 1, 40, 174)
-le = LabelEncoder()
-y = le.fit_transform(y)
-
-joblib.dump(le, "emotion_label_encoder.pkl")
-
-# Dataset setup
-X_tensor = torch.tensor(X, dtype=torch.float32)
-y_tensor = torch.tensor(y, dtype=torch.long)
-dataset = TensorDataset(X_tensor, y_tensor)
-
-train_len = int(len(dataset) * 0.8)
-val_len = len(dataset) - train_len
-train_set, val_set = random_split(dataset, [train_len, val_len])
-
-train_loader = DataLoader(train_set, batch_size=32, shuffle=True)
-val_loader = DataLoader(val_set, batch_size=32)
-
 class EmotionCNN(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
@@ -73,21 +48,44 @@ class EmotionCNN(nn.Module):
         x = x.view(x.size(0), -1)
         return self.fc(x)
 
-model = EmotionCNN(num_classes=len(le.classes_))
-optimizer = optim.Adam(model.parameters(), lr=0.001)
-loss_fn = nn.CrossEntropyLoss()
+if __name__ == "__main__":
+    X, y = [], []
+    for f in os.listdir("ravdess-data"):
+        if f.endswith(".wav"):
+            X.append(extract_mfcc_2d(os.path.join("ravdess-data", f)))
+            y.append(get_label(f))
 
-for epoch in range(15):
-    model.train()
-    running_loss = 0
-    for xb, yb in train_loader:
-        optimizer.zero_grad()
-        preds = model(xb)
-        loss = loss_fn(preds, yb)
-        loss.backward()
-        optimizer.step()
-        running_loss += loss.item()
-    print(f"Epoch {epoch+1}: loss {running_loss:.4f}")
+    X = np.array(X)[:, np.newaxis, :, :]
+    le = LabelEncoder()
+    y = le.fit_transform(y)
+    joblib.dump(le, "emotion_label_encoder.pkl")
 
-torch.save(model.state_dict(), "emotion_cnn.pth")
-print("Model saved to emotion_cnn.pth")
+    X_tensor = torch.tensor(X, dtype=torch.float32)
+    y_tensor = torch.tensor(y, dtype=torch.long)
+    dataset = TensorDataset(X_tensor, y_tensor)
+
+    train_len = int(len(dataset) * 0.8)
+    val_len = len(dataset) - train_len
+    train_set, val_set = random_split(dataset, [train_len, val_len])
+
+    train_loader = DataLoader(train_set, batch_size=32, shuffle=True)
+    val_loader = DataLoader(val_set, batch_size=32)
+
+    model = EmotionCNN(num_classes=len(le.classes_))
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    loss_fn = nn.CrossEntropyLoss()
+
+    for epoch in range(15):
+        model.train()
+        running_loss = 0
+        for xb, yb in train_loader:
+            optimizer.zero_grad()
+            preds = model(xb)
+            loss = loss_fn(preds, yb)
+            loss.backward()
+            optimizer.step()
+            running_loss += loss.item()
+        print(f"Epoch {epoch+1}: loss {running_loss:.4f}")
+
+    torch.save(model.state_dict(), "emotion_cnn.pth")
+    print("Model saved to emotion_cnn.pth")
