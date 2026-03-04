@@ -1,0 +1,16 @@
+openai-whisper
+speechrecognition
+pydub # pydub is needed to handle .mp3 or convert formats
+TTS #  Optionally download models: tts --list_models
+chromadb 
+sentence-transformers
+transformers
+librosa 
+scikit-learn 
+numpy 
+torch 
+matplotlib
+nltk
+flask
+joblib
+sklearn
